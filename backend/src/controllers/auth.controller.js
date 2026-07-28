@@ -96,4 +96,17 @@ async function loginUser(req,res){
 
 }
 
-module.exports={registerUser,loginUser};
+async function getProfile(req,res){
+    return res.status(200).json({
+        sucess:true,
+        message:"profile fetched successfully",
+        user:{
+            id:req.user._id,
+            name:req.user.name,
+            email:req.user.email
+        }
+    });
+}
+
+
+module.exports={registerUser,loginUser,getProfile};
