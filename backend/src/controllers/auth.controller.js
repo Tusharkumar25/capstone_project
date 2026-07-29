@@ -98,7 +98,7 @@ async function loginUser(req,res){
 
 async function getProfile(req,res){
     return res.status(200).json({
-        sucess:true,
+        success:true,
         message:"profile fetched successfully",
         user:{
             id:req.user._id,
