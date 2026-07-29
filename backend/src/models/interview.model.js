@@ -31,11 +31,46 @@ const interviewSchema=new mongoose.Schema({
     required: true,
     enum: [5, 10]
 },
-    status: {
+    status:{
     type: String,
-    enum: ["Pending", "Completed"],
+    enum: [
+        "Pending",
+        "In Progress",
+        "Completed"
+    ],
     default: "Pending"
+},
+
+questions: [
+    {
+        question: {
+            type: String,
+        },
+        answer: {
+            type: String,
+            default: ""
+        },
+        feedback: {
+            type: String,
+            default: ""
+        },
+        score: {
+            type: Number,
+            default: 0
+        }
+    }
+],
+
+overallScore: {
+    type: Number,
+    default: 0
+},
+
+overallFeedback: {
+    type: String,
+    default: ""
 }
+
 },{
     timestamps:true
 });
