@@ -1,4 +1,7 @@
 const interviewModel = require("../models/interview.model");
+const geminiService=require('../services/gemini.service')
+
+
 async function createInterview(req, res) {
 
     const {
@@ -25,13 +28,25 @@ if (
 }
 
 try{
-    const interview=await interviewModel.create({
-    user: req.user._id,
+
+const questions =
+await geminiService.generateInterviewQuestions({
     jobRole,
     technology,
     experience,
     difficulty,
     totalQuestions
+});
+
+
+const interview = await interviewModel.create({
+    user: req.user._id,
+    jobRole,
+    technology,
+    experience,
+    difficulty,
+    totalQuestions,
+    questions
 });
 
  return res.status(201).json({
@@ -44,11 +59,15 @@ try{
     console.error(err);
        return res.status(500).json({
         success: false,
-        message: "Internal Server Error"
+        message: err.message
     });
 }
 
 }
+
+
+
+
 
 
 module.exports={createInterview};
