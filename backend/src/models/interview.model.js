@@ -69,7 +69,25 @@ overallScore: {
 overallFeedback: {
     type: String,
     default: ""
-}
+},
+
+strengths: [
+    {
+        type: String
+    }
+],
+
+weaknesses: [
+    {
+        type: String
+    }
+],
+
+suggestions: [
+    {
+        type: String
+    }
+]
 
 },{
     timestamps:true

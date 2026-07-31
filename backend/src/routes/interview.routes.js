@@ -5,5 +5,7 @@ const interviewController=require('../controllers/interview.controller')
 
 router.post("/create",authUser,interviewController.createInterview);
 router.get("/:id", authUser, interviewController.getInterviewById);
+router.post("/:id/answer", authUser, interviewController.saveAnswer);
+router.post("/:id/submit", authUser, interviewController.submitInterview);
 
 module.exports=router;
