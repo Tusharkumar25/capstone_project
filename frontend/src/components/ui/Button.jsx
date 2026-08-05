@@ -17,7 +17,7 @@ function Button({
       onClick={onClick}
       disabled={disabled || loading}
       className={clsx(
-        "w-full rounded-xl bg-blue-600 py-3 text-white font-semibold shadow-lg transition-all duration-300 hover:shadow-indigo-500/40 disabled:cursor-not-allowed disabled:opacity-60",
+        "w-full rounded-xl bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 py-3 text-white font-semibold shadow-lg shadow-orange-500/20 transition-all duration-300 hover:shadow-orange-500/40 disabled:cursor-not-allowed disabled:opacity-60",
         className
       )}
     >

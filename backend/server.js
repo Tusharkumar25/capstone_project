@@ -10,6 +10,7 @@ const startServer=async()=>{
  await connectDB();
 
 app.listen(PORT, () => {
+    console.log("CLIENT_URL =", process.env.CLIENT_URL);
     console.log(`Server is running on port ${PORT}`);
 });
 }

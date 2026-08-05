@@ -3,7 +3,7 @@ const bcrypt =require("bcryptjs")
 const jwt =require("jsonwebtoken")
 
 async function registerUser(req,res){
-  
+ 
     const {name,email,password}=req.body;
 
     if(!name || !email|| !password){
