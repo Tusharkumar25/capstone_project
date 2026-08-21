@@ -14,6 +14,7 @@ function Interview() {
 
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answer, setAnswer] = useState("");
+  const [submitting, setSubmitting] = useState(false);
    
   const navigate = useNavigate();
 
@@ -47,6 +48,7 @@ async function saveCurrentAnswer() {
 async function submitInterview() {
     
   try {
+    setSubmitting(true);
     const response = await axios.post(
       `http://localhost:3000/api/interview/${id}/submit`,
       {},
@@ -72,6 +74,8 @@ async function submitInterview() {
       error.response?.data?.message ||
         "Failed to submit interview"
     );
+  } finally {
+    setSubmitting(false);
   }
 }
 
@@ -129,6 +133,32 @@ async function submitInterview() {
 
   return (
     <div className="min-h-screen bg-[#08090b] px-6 py-10 text-white">
+
+       {submitting && (
+  <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm">
+
+    <div className="rounded-2xl border border-white/10 bg-[#0d0f12] px-10 py-8 text-center shadow-2xl">
+
+      <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-white/20 border-t-orange-500" />
+
+      <h2 className="mt-5 text-xl font-semibold text-white">
+        Evaluating Your Interview
+      </h2>
+
+      <p className="mt-2 text-sm text-gray-400">
+        AI is analyzing your answers...
+      </p>
+
+      <p className="mt-4 text-xs text-gray-500">
+        Generating your score and feedback
+      </p>
+
+    </div>
+
+  </div>
+)}
+
+
 
       <div className="mx-auto max-w-4xl">
 
@@ -267,31 +297,32 @@ async function submitInterview() {
 
             ) : (
 
-                <button
-                type="button"
-                onClick={async () => {
-                    if (!answer.trim()) {
-                    toast.error("Please enter your answer");
-                    return;
-                    }
+                                    <button
+                    type="button"
+                    disabled={submitting}
+                    onClick={async () => {
+                        if (!answer.trim()) {
+                        toast.error("Please enter your answer");
+                        return;
+                        }
 
-                    const saved = await saveCurrentAnswer();
+                        const saved = await saveCurrentAnswer();
 
-                    if (!saved) return;
+                        if (!saved) return;
 
-                    
-
-                    toast.success("Answer saved. Submitting interview...");
-
-                    await submitInterview();
-
-                    // abhi temporary
-                    console.log("All answers saved");
-                }}
-                className="rounded-xl bg-gradient-to-r from-red-500 via-orange-500 to-yellow-400 px-7 py-3 font-semibold text-black transition hover:scale-105"
-                >
-                Submit Interview
-                </button>
+                        await submitInterview();
+                    }}
+                    className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-red-500 via-orange-500 to-yellow-400 px-7 py-3 font-semibold text-black transition hover:scale-105 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                    {submitting ? (
+                        <>
+                        <span className="h-5 w-5 animate-spin rounded-full border-2 border-black/30 border-t-black" />
+                        Evaluating...
+                        </>
+                    ) : (
+                        "Submit Interview"
+                    )}
+                    </button>
 
             )}
 

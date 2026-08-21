@@ -329,4 +329,31 @@ async function getRecentInterviews(req, res) {
 }
 
 
-module.exports={createInterview,getInterviewById,saveAnswer,submitInterview,getInterviewStats,getRecentInterviews};
+async function getAllInterviews(req, res) {
+    try {
+
+        const interviews = await interviewModel
+            .find({ user: req.user._id })
+            .select(
+                "_id jobRole technology experience difficulty totalQuestions status overallScore createdAt"
+            )
+            .sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            success: true,
+            interviews
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch interviews"
+        });
+    }
+}
+
+
+module.exports={createInterview,getInterviewById,saveAnswer,submitInterview,getInterviewStats,getRecentInterviews,getAllInterviews};

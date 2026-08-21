@@ -108,5 +108,28 @@ async function getProfile(req,res){
     });
 }
 
+async function logoutUser(req, res) {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    });
 
-module.exports={registerUser,loginUser,getProfile};
+    return res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Logout failed",
+    });
+  }
+}
+
+
+module.exports={registerUser,loginUser,getProfile,logoutUser};

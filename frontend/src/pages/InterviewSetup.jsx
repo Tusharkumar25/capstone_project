@@ -6,6 +6,7 @@ import { ArrowLeft, BrainCircuit, Play } from "lucide-react";
 
 function InterviewSetup() {
   const navigate = useNavigate();
+  const [creating, setCreating] = useState(false);
 
   const [formData, setFormData] = useState({
     jobRole: "",
@@ -28,6 +29,8 @@ async function handleSubmit(e) {
   e.preventDefault();
 
   try {
+    setCreating(true);
+
     const response = await axios.post(
       "http://localhost:3000/api/interview/create",
       {
@@ -42,25 +45,54 @@ async function handleSubmit(e) {
 
     toast.success(response.data.message);
 
-    console.log("Created Interview:", response.data.interview);
+    console.log(
+      "Created Interview:",
+      response.data.interview
+    );
 
-    // Next step:
-    // navigate(`/interview/${response.data.interview._id}`);
-
-    navigate(`/interview/${response.data.interview._id}`);
+    navigate(
+      `/interview/${response.data.interview._id}`
+    );
 
   } catch (error) {
     console.error(error);
 
     toast.error(
       error.response?.data?.message ||
-      "Failed to create interview"
+        "Failed to create interview"
     );
+
+  } finally {
+    setCreating(false);
   }
 }
 
   return (
     <div className="min-h-screen bg-[#08090b] px-6 py-10 text-white">
+        
+        {creating && (
+  <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm">
+
+    <div className="rounded-2xl border border-white/10 bg-[#0d0f12] px-10 py-8 text-center shadow-2xl">
+
+      <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-white/20 border-t-orange-500" />
+
+      <h2 className="mt-5 text-xl font-semibold text-white">
+        Preparing Your Interview
+      </h2>
+
+      <p className="mt-2 text-sm text-gray-400">
+        AI is generating your interview questions...
+      </p>
+
+      <p className="mt-4 text-xs text-gray-500">
+        Please wait a moment
+      </p>
+
+    </div>
+
+  </div>
+)}
 
       <div className="mx-auto max-w-3xl">
 
@@ -201,13 +233,23 @@ async function handleSubmit(e) {
           </div>
 
           {/* Submit */}
-          <button
-            type="submit"
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-red-500 via-orange-500 to-yellow-400 py-4 font-semibold text-black shadow-lg shadow-orange-500/20 transition hover:scale-[1.02]"
-          >
-            <Play size={20} />
-            Start AI Interview
-          </button>
+                <button
+                type="submit"
+                disabled={creating}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-red-500 via-orange-500 to-yellow-400 py-4 font-semibold text-black shadow-lg shadow-orange-500/20 transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                {creating ? (
+                    <>
+                    <span className="h-5 w-5 animate-spin rounded-full border-2 border-black/30 border-t-black" />
+                    Preparing Interview...
+                    </>
+                ) : (
+                    <>
+                    <Play size={20} />
+                    Start AI Interview
+                    </>
+                )}
+                </button>
 
         </form>
 

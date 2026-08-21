@@ -24,6 +24,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 import { motion } from "framer-motion";
 
@@ -33,6 +34,38 @@ function Dashboard() {
 
     const [user, setUser] = useState(null);
     const [recentInterviews, setRecentInterviews] = useState([]);
+    const [showLogout, setShowLogout] = useState(false);
+
+
+    async function handleLogout() {
+  try {
+    await axios.post(
+      "http://localhost:3000/api/auth/logout",
+      {},
+      {
+        withCredentials: true,
+      }
+    );
+
+    toast.success("Logged out successfully");
+
+    navigate("/login");
+
+  } catch (error) {
+    console.error(error);
+
+    toast.error(
+      error.response?.data?.message ||
+      "Logout failed"
+    );
+  }
+}
+
+
+
+
+
+    
 
   useEffect(() => {
     async function getProfile() {
@@ -136,10 +169,13 @@ useEffect(() => {
             text="My Performance"
           />
 
-          <SidebarItem
-            icon={<History size={20} />}
-            text="Interview History"
-          />
+<SidebarItem
+  icon={<History size={20} />}
+  text="Interview History"
+  onClick={() => navigate("/interviews")}
+/>
+
+
 
           <SidebarItem
             icon={<Settings size={20} />}
@@ -186,7 +222,12 @@ useEffect(() => {
               </p>
 
               <p className="truncate text-xs text-gray-500">
-                {user?.email || "Loading..."}
+                <button
+  onClick={() => setShowLogout((prev) => !prev)}
+  className="text-left transition hover:text-orange-400"
+>
+  {user?.email || "Loading..."}
+</button>
               </p>
             </div>
 
@@ -244,7 +285,29 @@ useEffect(() => {
               {/* User */}
 
               <div className="hidden h-11 w-11 items-center justify-center rounded-full border border-orange-500/30 bg-gradient-to-br from-red-500 to-orange-400 font-bold sm:flex">
-                T
+                  <div className="relative">
+
+  <button
+    onClick={() => setShowLogout((prev) => !prev)}
+    className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-red-500 via-orange-500 to-yellow-400 font-bold text-black transition hover:scale-105"
+  >
+    {user?.name?.charAt(0).toUpperCase() || "U"}
+  </button>
+
+  {showLogout && (
+    <div className="absolute right-0 top-12 z-50 w-40 rounded-xl border border-white/10 bg-[#15171b] p-2 shadow-2xl">
+
+      <button
+        onClick={handleLogout}
+        className="w-full rounded-lg px-4 py-2 text-left text-sm text-gray-300 transition hover:bg-red-500/10 hover:text-red-400"
+      >
+        Logout
+      </button>
+
+    </div>
+  )}
+
+</div>
               </div>
 
             </div>
@@ -474,33 +537,42 @@ useEffect(() => {
 
   </div>
 
-  <div className="space-y-3">
+<div className="space-y-3">
 
-    {recentInterviews.length > 0 ? (
-      recentInterviews.map((interview) => (
-        <InterviewRow
-          key={interview._id}
-          role={interview.jobRole}
-          date={new Date(interview.createdAt).toLocaleDateString()}
-          score={`${interview.overallScore}%`}
-          status={
-            interview.status === "Completed"
-              ? interview.overallScore >= 80
-                ? "Excellent"
-                : interview.overallScore >= 60
-                ? "Good"
-                : "Average"
-              : interview.status
+  {recentInterviews.length > 0 ? (
+    recentInterviews.map((interview) => (
+      <InterviewRow
+        key={interview._id}
+        role={interview.jobRole}
+        date={new Date(interview.createdAt).toLocaleDateString()}
+        score={`${interview.overallScore}%`}
+        status={
+          interview.status === "Completed"
+            ? interview.overallScore >= 80
+              ? "Excellent"
+              : interview.overallScore >= 60
+              ? "Good"
+              : "Average"
+            : interview.status
+        }
+
+        onClick={() => {
+          if (interview.status !== "Completed") {
+            toast.error("This interview is not completed yet.");
+            return;
           }
-        />
-      ))
-    ) : (
-      <div className="py-8 text-center text-gray-400">
-        No interviews yet
-      </div>
-    )}
 
-  </div>
+          navigate(`/interview/${interview._id}/result`);
+        }}
+      />
+    ))
+  ) : (
+    <div className="py-8 text-center text-gray-400">
+      No interviews yet
+    </div>
+  )}
+
+</div>
 
 </section>
 
@@ -540,8 +612,10 @@ useEffect(() => {
               </button>
 
 
-              <button className="group flex items-center gap-5 rounded-xl border border-orange-500/20 bg-gradient-to-r from-orange-500/10 to-transparent p-5 text-left transition hover:border-orange-500/40">
-
+              <button
+  onClick={() => navigate("/interviews")}
+  className="group flex items-center gap-5 rounded-xl border border-orange-500/20 bg-gradient-to-r from-orange-500/10 to-transparent p-5 text-left transition hover:border-orange-500/40"
+>
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-500/20 text-orange-400">
                   <History />
                 </div>
@@ -577,9 +651,10 @@ useEffect(() => {
 
 /* ================= COMPONENTS ================= */
 
-function SidebarItem({ icon, text, active }) {
+function SidebarItem({ icon, text, active, onClick }) {
   return (
     <button
+      onClick={onClick}
       className={`flex w-full items-center gap-4 rounded-xl px-4 py-3 text-sm font-medium transition ${
         active
           ? "bg-gradient-to-r from-red-500/30 via-orange-500/20 to-transparent text-white"
@@ -592,7 +667,6 @@ function SidebarItem({ icon, text, active }) {
     </button>
   );
 }
-
 
 function StatCard({ icon, title, value, change }) {
   return (
@@ -635,9 +709,13 @@ function InterviewRow({
   date,
   score,
   status,
+  onClick,
 }) {
   return (
-    <div className="flex items-center gap-4 rounded-xl border border-white/5 bg-white/[0.02] p-4 transition hover:border-orange-500/20">
+   <div
+  onClick={onClick}
+  className="flex cursor-pointer items-center gap-4 rounded-xl border border-white/5 bg-white/[0.02] p-4 transition hover:border-orange-500/20 hover:bg-white/[0.04]"
+>
 
       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-500/10 text-orange-400">
         <Mic size={18} />
