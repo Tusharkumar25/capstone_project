@@ -221,4 +221,112 @@ return res.status(200).json({
     }
 }
 
-module.exports={createInterview,getInterviewById,saveAnswer,submitInterview};
+
+async function getInterviewStats(req, res) {
+    try {
+        const userId = req.user._id;
+
+        const interviews = await interviewModel.find({
+            user: userId
+        });
+
+        const totalInterviews = interviews.length;
+
+        const completedInterviews = interviews.filter(
+            interview => interview.status === "Completed"
+        );
+
+        // Average Score
+        let averageScore = 0;
+
+        if (completedInterviews.length > 0) {
+            const totalScore = completedInterviews.reduce(
+                (sum, interview) => sum + interview.overallScore,
+                0
+            );
+
+            averageScore = Math.round(
+                totalScore / completedInterviews.length
+            );
+        }
+
+        // Questions Answered
+        let questionsAnswered = 0;
+
+        completedInterviews.forEach(interview => {
+            interview.questions.forEach(question => {
+                if (question.answer && question.answer.trim() !== "") {
+                    questionsAnswered++;
+                }
+            });
+        });
+
+        // Improvement
+        let improvement = 0;
+
+        if (completedInterviews.length >= 2) {
+            const sortedInterviews = [...completedInterviews].sort(
+                (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+            );
+
+            const firstScore = sortedInterviews[0].overallScore;
+            const latestScore =
+                sortedInterviews[sortedInterviews.length - 1].overallScore;
+
+            if (firstScore > 0) {
+                improvement = Math.round(
+                    ((latestScore - firstScore) / firstScore) * 100
+                );
+            }
+        }
+
+        return res.status(200).json({
+            success: true,
+            stats: {
+                totalInterviews,
+                averageScore,
+                questionsAnswered,
+                improvement
+            }
+        });
+
+    } catch (err) {
+        console.error(err);
+
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch interview statistics"
+        });
+    }
+}
+
+
+async function getRecentInterviews(req, res) {
+    try {
+        const interviews = await interviewModel
+            .find({
+                user: req.user._id
+            })
+            .sort({ createdAt: -1 })
+            .limit(5)
+            .select(
+                "jobRole technology difficulty overallScore status createdAt"
+            );
+
+        return res.status(200).json({
+            success: true,
+            interviews
+        });
+
+    } catch (err) {
+        console.error(err);
+
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch recent interviews"
+        });
+    }
+}
+
+
+module.exports={createInterview,getInterviewById,saveAnswer,submitInterview,getInterviewStats,getRecentInterviews};
