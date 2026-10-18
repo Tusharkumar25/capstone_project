@@ -32,7 +32,7 @@ async function handleSubmit(e) {
     setCreating(true);
 
     const response = await axios.post(
-      "http://localhost:3000/api/interview/create",
+      `${import.meta.env.VITE_API_URL}/api/interview/create`,
       {
         ...formData,
         experience: Number(formData.experience),

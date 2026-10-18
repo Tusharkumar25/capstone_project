@@ -27,7 +27,7 @@ function Result() {
     async function fetchResult() {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/interview/${id}`,
+          `${import.meta.env.VITE_API_URL}/api/interview/${id}`,
           {
             withCredentials: true,
           }

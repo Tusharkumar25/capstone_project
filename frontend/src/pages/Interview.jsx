@@ -45,7 +45,7 @@ const [faceDetectionStatus, setFaceDetectionStatus] =
 async function saveCurrentAnswer() {
   try {
     await axios.post(
-      `http://localhost:3000/api/interview/${id}/answer`,
+      `${import.meta.env.VITE_API_URL}/api/interview/${id}/answer`,
       {
         questionIndex: currentQuestion,
         answer: answerRef.current,
@@ -110,7 +110,7 @@ async function submitInterview() {
   try {
     setSubmitting(true);
 const response = await axios.post(
-  `http://localhost:3000/api/interview/${id}/submit`,
+  `${import.meta.env.VITE_API_URL}/api/interview/${id}/submit`,
   {
     multipleFacesDetected: multipleFacesDetectedRef.current,
   },
@@ -358,7 +358,7 @@ useEffect(() => {
     async function fetchInterview() {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/interview/${id}`,
+          `${import.meta.env.VITE_API_URL}/api/interview/${id}`,
           {
             withCredentials: true,
           }

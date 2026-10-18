@@ -40,7 +40,7 @@ function Dashboard() {
     async function handleLogout() {
   try {
     await axios.post(
-      "http://localhost:3000/api/auth/logout",
+      `${import.meta.env.VITE_API_URL}/api/auth/logout`,
       {},
       {
         withCredentials: true,
@@ -71,7 +71,7 @@ function Dashboard() {
     async function getProfile() {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/auth/profile",
+          `${import.meta.env.VITE_API_URL}/api/auth/profile`,
           {
             withCredentials: true,
           }
@@ -99,7 +99,7 @@ useEffect(() => {
   async function fetchStats() {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/interview/stats",
+        `${import.meta.env.VITE_API_URL}/api/interview/stats`,
         {
           withCredentials: true,
         }
@@ -109,7 +109,7 @@ useEffect(() => {
 
        // Recent Interviews
       const recentResponse = await axios.get(
-        "http://localhost:3000/api/interview/recent",
+        `${import.meta.env.VITE_API_URL}/api/interview/recent`,
         {
           withCredentials: true,
         }
