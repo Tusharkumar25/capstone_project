@@ -268,7 +268,9 @@ function Register() {
               <p className="mt-8 text-center text-gray-400">
                 Already have an account?
                 <span className="ml-2 cursor-pointer font-semibold text-orange-400 hover:text-orange-300">
-                  Login
+                   <a href="/login" className="text-orange-400 hover:text-orange-300">
+                    Login
+                  </a>
                 </span>
               </p>
             </div>

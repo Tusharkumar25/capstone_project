@@ -314,6 +314,24 @@ function Result() {
         </div>
 
 
+        {/* Camera Monitoring Result */}
+<div className="rounded-2xl border border-white/10 bg-[#0d0f12] p-5 mt-5">
+  <h3 className="mb-3 text-lg font-semibold text-white">
+    Camera Monitoring Result
+  </h3>
+
+  {interview.multipleFacesDetected ? (
+    <p className="text-red-400">
+      ⚠️ Multiple Faces Detected
+    </p>
+  ) : (
+    <p className="text-green-400">
+      ✓ Good Face Detection
+    </p>
+  )}
+</div>
+
+
         {/* ================= STRENGTHS / WEAKNESSES ================= */}
 
         <div className="mt-6 grid gap-6 lg:grid-cols-2">

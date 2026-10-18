@@ -153,6 +153,7 @@ async function submitInterview(req,res){
     try{
 
      const { id } = req.params;
+     const { multipleFacesDetected } = req.body;
      const interview = await interviewModel.findById(id);
      if (!interview) {
     return res.status(404).json({
@@ -169,6 +170,7 @@ if (interview.user.toString() !== req.user._id.toString()) {
     });
 }
 
+interview.multipleFacesDetected = multipleFacesDetected === true;
 
 if (interview.status === "Completed") {
     return res.status(409).json({

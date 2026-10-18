@@ -71,6 +71,11 @@ overallFeedback: {
     default: ""
 },
 
+multipleFacesDetected: {
+  type: Boolean,
+  default: false,
+},
+
 strengths: [
     {
         type: String
